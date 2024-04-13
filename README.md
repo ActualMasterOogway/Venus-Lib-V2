@@ -4,7 +4,7 @@ An edited version of Venus Lib
 ## Example
 
 ```lua
-local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/vozoid/ui-libraries/main/drawing/void/source.lua"))()
+local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/ActualMasterOogway/Venus-Lib-V2/main/StableSource.lua"))()
 
 local watermark = library:Watermark("watermark | 60 fps | v4.20 | dev")
 -- watermark:Set("Watermark Set")
