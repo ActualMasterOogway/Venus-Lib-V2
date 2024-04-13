@@ -1,4 +1,4 @@
---// CUSTOM DRAWING
+-- \\ CUSTOM DRAWING // --
 
 local drawing = {} do
     local services = setmetatable({}, {
@@ -950,7 +950,7 @@ local drawing = {} do
     end
 end
 
--- // UI LIBRARY
+-- \\ UI LIBRARY // --
 
 local services = setmetatable({}, {
     __index = function(_, k)
@@ -1040,17 +1040,29 @@ function utility.table(tbl, usemt)
     return tbl
 end
 
-function utility.colortotable(color)
+function utility:colortotable(color)
     local r, g, b = math.floor(color.R * 255),  math.floor(color.G * 255), math.floor(color.B * 255)
     return {r, g, b}
 end
 
-function utility.tabletocolor(tbl)
+function utility:tabletocolor(tbl)
     return Color3.fromRGB(unpack(tbl))
 end
 
-function utility.round(number, float)
-    return float * math.floor(number / float)
+function utility:resizesize(x, y)
+    local X, Y, CurrentSize = x / 1920, y / 1080, workspace.CurrentCamera.ViewportSize
+    return CurrentSize.X * X, CurrentSize.Y * Y
+end
+
+function utility:round(number, decimals)
+    decimals = typeof(decimals) == "number" and decimals >= 1 and decimals or 1
+    local float = 1
+    
+    for i = 1, decimals do
+        float = tonumber(`{float}0`)
+    end
+
+    return math.floor(number / float) * float
 end
 
 function utility.getrgb(color)
@@ -1130,8 +1142,19 @@ local themes = {
 
 local themeobjects = {}
 
-local library = utility.table({theme = table.clone(themes.Default), folder = "vozoiduilib", extension = "vozoid", flags = {}, open = true, keybind = Enum.KeyCode.RightShift, mousestate = services.InputService.MouseIconEnabled, cursor = nil, holder = nil, connections = {}}, true)
-local decode = (syn and syn.crypt.base64.decode) or (crypt and crypt.base64decode) or base64_decode
+local library = utility.table({
+    theme = table.clone(themes.Default), 
+    folder = "vozoiduilib", 
+    extension = "vozoid", 
+    flags = {}, 
+    open = true, 
+    keybind = Enum.KeyCode.RightShift, 
+    mousestate = services.InputService.MouseIconEnabled, 
+    cursor = nil, 
+    holder = nil, 
+    connections = {}
+}, true)
+local decode = (syn and syn.crypt.base64.decode) or (crypt and crypt.base64decode) or (base64 and base64.decode) or base64_decode
 library.gradient = decode("iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAABuSURBVChTxY9BDoAgDASLGD2ReOYNPsR/+BAfroI7hibe9OYmky2wbUPIOdsXdc1f9WMwppQm+SDGBnUvomAQBH49qzhFEag25869ElzaIXDhD4JGbyoEVxUedN8FKwnfmwhucgKICc+pNB1mZhdCdhsa2ky0FAAAAABJRU5ErkJggg==")
 library.utility = utility
 
@@ -2013,7 +2036,7 @@ function library.createdropdown(holder, content, flag, callback, default, max, s
     return dropdowntypes
 end
 
-function library.createslider(min, max, parent, text, default, float, flag, callback)
+function library.createslider(min, max, parent, text, default, decimals, flag, callback)
     local slider = utility.create("Square", {
         Filled = true,
         Thickness = 0,
@@ -2055,7 +2078,7 @@ function library.createslider(min, max, parent, text, default, float, flag, call
     })
 
     local function set(value)
-        value = math.clamp(utility.round(value, float), min, max)
+        value = math.clamp(utility:round(value, decimals), min, max)
 
         valuetext.Text = text:gsub("%[value%]", string.format("%.14g", value))
         
