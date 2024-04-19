@@ -965,8 +965,8 @@ local utility = setmetatable({}, {
     __index = function(self, index)
         return typeof(index) == "string" and rawget(self, index:lower()) or rawget(self, index)
     end,
-    __index = function(self, index, value)
-        return typeof(index) == "string" and rawset(self, index:lower(), value) or rawget(self, index, value)
+    __newindex = function(self, index, value)
+        return typeof(index) == "string" and rawset(self, index:lower(), value) or rawset(self, index, value)
     end,
 })
 
