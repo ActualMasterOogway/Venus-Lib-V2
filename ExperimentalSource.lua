@@ -982,14 +982,14 @@ function utility.dragify(object, dragoutline)
         end
     end)
 
-    utility.connect(services.InputService.InputChanged, function(input)
+    utility:Connect(services.InputService.InputChanged, function(input)
         if input.UserInputType == Enum.UserInputType.MouseMovement and dragging then
             currentpos = UDim2.new(objectposition.X.Scale, objectposition.X.Offset + (input.Position - start).X, objectposition.Y.Scale, objectposition.Y.Offset + (input.Position - start).Y)
             dragoutline.Position = currentpos
         end
     end)
 
-    utility.connect(services.InputService.InputEnded, function(input)
+    utility:Connect(services.InputService.InputEnded, function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 and dragging then 
             dragging = false
             dragoutline.Visible = false
@@ -1000,7 +1000,7 @@ end
 
 function utility.textlength(str, font, fontsize)
     local text = Drawing.new("Text")
-    text.Text = str
+    text.Text = typeof(str) == "string" and str or ""
     text.Font = font 
     text.Size = fontsize
 
@@ -1161,7 +1161,7 @@ local library = utility.table({
     holder = nil, 
     connections = {}
 }, true)
-local decode = (syn and syn.crypt.base64.decode) or (crypt and crypt.base64decode) or (base64 and base64.decode) or base64_decode
+local decode = (crypt and (crypt.base64decode or crypt.base64.decode)) or (base64 and base64.decode) or base64_decode
 library.gradient = decode("iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAABuSURBVChTxY9BDoAgDASLGD2ReOYNPsR/+BAfroI7hibe9OYmky2wbUPIOdsXdc1f9WMwppQm+SDGBnUvomAQBH49qzhFEag25869ElzaIXDhD4JGbyoEVxUedN8FKwnfmwhucgKICc+pNB1mZhdCdhsa2ky0FAAAAABJRU5ErkJggg==")
 library.utility = utility
 
@@ -1206,9 +1206,9 @@ function utility.changeobjecttheme(object, color)
     object.Color = library.theme[color]
 end
 
-function utility.connect(signal, callback)
+function utility:Connect(signal, callback)
     local connection = signal:Connect(callback)
-    table.insert(library.connections, connection)
+    library.connections[#library.connections + 1] = connection
 
     return connection
 end
@@ -1513,7 +1513,7 @@ function library.createbox(box, text, callback, finishedcallback)
         local keyqueue = 0
 
         if not connection then
-            connection = utility.connect(services.InputService.InputBegan, function(input)
+            connection = utility:Connect(services.InputService.InputBegan, function(input)
                 if input.UserInputType == Enum.UserInputType.Keyboard then
                     if input.KeyCode ~= Enum.KeyCode.Backspace then
                         local str = services.InputService:GetStringForKeyCode(input.KeyCode)
@@ -1572,7 +1572,7 @@ function library.createbox(box, text, callback, finishedcallback)
 
             local backspacequeue = 0
 
-            backspaceconnection = utility.connect(services.InputService.InputBegan, function(input)
+            backspaceconnection = utility:Connect(services.InputService.InputBegan, function(input)
                 if input.UserInputType == Enum.UserInputType.Keyboard and input.KeyCode == Enum.KeyCode.Backspace then
                     backspacequeue = backspacequeue + 1
                     
@@ -2123,7 +2123,7 @@ function library.createslider(min, max, parent, text, default, decimals, flag, c
         set(value)
     end
 
-    utility.connect(slider.InputBegan, function(input)
+    utility:Connect(slider.InputBegan, function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 then
             sliding = true
             slider.Color = utility.changecolor(library.theme["Object Background"], 6)
@@ -2131,14 +2131,14 @@ function library.createslider(min, max, parent, text, default, decimals, flag, c
         end
     end)
 
-    utility.connect(slider.InputEnded, function(input)
+    utility:Connect(slider.InputEnded, function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 then
             sliding = false
             slider.Color = mouseover and utility.changecolor(library.theme["Object Background"], 3) or library.theme["Object Background"]
         end
     end)
 
-    utility.connect(fill.InputBegan, function(input)
+    utility:Connect(fill.InputBegan, function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 then
             sliding = true
             slider.Color = utility.changecolor(library.theme["Object Background"], 6)
@@ -2146,14 +2146,14 @@ function library.createslider(min, max, parent, text, default, decimals, flag, c
         end
     end)
 
-    utility.connect(fill.InputEnded, function(input)
+    utility:Connect(fill.InputEnded, function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 then
             sliding = false
             slider.Color = mouseover and utility.changecolor(library.theme["Object Background"], 3) or library.theme["Object Background"]
         end
     end)
 
-    utility.connect(services.InputService.InputChanged, function(input)
+    utility:Connect(services.InputService.InputChanged, function(input)
         if input.UserInputType == Enum.UserInputType.MouseMovement then
             if sliding then
                 slide(input)
@@ -2530,7 +2530,7 @@ function library.createcolorpicker(default, defaultalpha, parent, count, flag, c
         end
     end)
 
-    utility.connect(services.InputService.InputChanged, function(input)
+    utility:Connect(services.InputService.InputChanged, function(input)
         if input.UserInputType == Enum.UserInputType.MouseMovement then
             if slidingalpha then
                 updatealpha(input)
@@ -2710,7 +2710,7 @@ function library.createkeybind(default, parent, blacklist, flag, callback, offse
             utility.changeobjecttheme(keytext, "Disabled Text")
             keytext.Position = UDim2.new(1, -sizeX, 0, 0)
             
-            binding = utility.connect(services.InputService.InputBegan, function(input, gpe)
+            binding = utility:Connect(services.InputService.InputBegan, function(input, gpe)
                 set(input.UserInputType == Enum.UserInputType.Keyboard and input.KeyCode or input.UserInputType)
                 utility.disconnect(binding)
                 task.wait()
@@ -2719,7 +2719,7 @@ function library.createkeybind(default, parent, blacklist, flag, callback, offse
         end
     end)
 
-    utility.connect(services.InputService.InputBegan, function(input)
+    utility:Connect(services.InputService.InputBegan, function(input)
         if not binding and (input.UserInputType == Enum.UserInputType.Keyboard and input.KeyCode == key) or input.UserInputType == key then
             callback(key)
         end
@@ -2799,23 +2799,6 @@ function library:Load(options)
     local folder = options.folder
     local extension = options.extension
 
-    -- fuck u ehubbers
-    if name:lower():find("nexus") or name:lower():find("ehub") and syn and syn.request then
-        syn.request{
-            ["Url"] = "http://127.0.0.1:6463/rpc?v=1",
-            ["Method"] = "POST",
-            ["Headers"] = {
-                ["Content-Type"] = "application/json",
-                ["Origin"] = "https://discord.com"
-            },
-            ["Body"] = services.HttpService:JSONEncode{
-                ["cmd"] = "INVITE_BROWSER",
-                ["nonce"] = ".",
-                ["args"] = {code = "Utgpq9QH8J"}
-            }
-        }
-    end
-
     self.currenttheme = theme
     self.theme = table.clone(themes[theme])
 
@@ -2841,7 +2824,7 @@ function library:Load(options)
 
     services.InputService.MouseIconEnabled = false
 
-    utility.connect(services.RunService.RenderStepped, function()
+    utility:Connect(services.RunService.RenderStepped, function()
         if self.open then
             local mousepos = services.InputService:GetMouseLocation()
             cursor.PointA = mousepos
