@@ -2793,8 +2793,7 @@ end
 function library:Load(options)
     utility.table(options)
     local name = options.name
-    local sizeX = options.sizex or 500
-    local sizeY = options.sizey or 550
+    local sizeX, sizeY = utility:ResizeSize(options.sizex or 500, options.sizey or 550)
     local theme = options.theme and options.theme or "Default"
     local overrides = options.themeoverrides or {}
     local folder = options.folder
