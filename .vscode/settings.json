@@ -140,7 +140,11 @@
         "gethiddenui",
         "isfunctionhooked",
         "restorefunction",
-        "clonerefrence"
+        "clonerefrence",
+        "setrawmetatable",
+        "base64",
+        "base64_decode",
+        "crypt"
     ],
     "workbench.iconTheme": "roblox-vscode-icon-theme",
     "robloxLsp.diagnostics.disable": [
