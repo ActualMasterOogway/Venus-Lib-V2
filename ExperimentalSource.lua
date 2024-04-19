@@ -2743,6 +2743,7 @@ function library.createkeybind(default, parent, blacklist, flag, callback, offse
 end
 
 function library:Watermark(str)
+    str = tostring(str)
     local size = utility.textlength(str, Drawing.Fonts.Plex, 13).X
 
     local watermark = utility.create("Square", {
